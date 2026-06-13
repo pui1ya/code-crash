@@ -1,0 +1,71 @@
+
+# CrashReduce Prometheus Configuration
+#
+# Purpose:
+# Collect metrics from:
+# - Coordinator
+# - Workers
+# - Prometheus itself
+#
+# Future:
+# - Grafana dashboards
+# - Alertmanager integration
+
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+# Rules files (future)
+rule_files: []
+
+scrape_configs:
+
+  # ======================================
+  # Prometheus Self Monitoring
+  # ======================================
+  - job_name: "prometheus"
+
+    static_configs:
+      - targets:
+          - "localhost:9090"
+
+  # ======================================
+  # Coordinator Metrics
+  # ======================================
+  - job_name: "crashreduce-coordinator"
+
+    metrics_path: /metrics
+
+    static_configs:
+      - targets:
+          - "coordinator:8000"
+
+    scrape_interval: 5s
+
+  # ======================================
+  # Worker Metrics
+  # ======================================
+  - job_name: "crashreduce-workers"
+
+    metrics_path: /metrics
+
+    static_configs:
+      - targets:
+          - "worker1:9001"
+          - "worker2:9001"
+          - "worker3:9001"
+
+    scrape_interval: 5s
+
+  # ======================================
+  # Dashboard Metrics (Optional)
+  # ======================================
+  - job_name: "crashreduce-dashboard"
+
+    metrics_path: /metrics
+
+    static_configs:
+      - targets:
+          - "dashboard:3000"
+
+    scrape_interval: 15s
