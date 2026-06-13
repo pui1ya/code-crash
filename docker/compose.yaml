@@ -1,0 +1,182 @@
+
+version: "3.9"
+
+services:
+
+  # ==================================================
+  # COORDINATOR
+  # ==================================================
+
+  coordinator:
+
+    build:
+      context: ..
+      dockerfile: docker/coordinator.Dockerfile
+
+    container_name: crashreduce-coordinator
+
+    ports:
+      - "8000:8000"
+
+    restart: unless-stopped
+
+    networks:
+      - crashreduce-network
+
+    volumes:
+      - ../storage:/app/storage
+
+  # ==================================================
+  # WORKER 1
+  # ==================================================
+
+  worker1:
+
+    build:
+      context: ..
+      dockerfile: docker/worker.Dockerfile
+
+    container_name: crashreduce-worker-1
+
+    depends_on:
+      - coordinator
+
+    environment:
+      - COORDINATOR_URL=http://coordinator:8000
+
+    restart: unless-stopped
+
+    networks:
+      - crashreduce-network
+
+    volumes:
+      - ../storage:/app/storage
+
+  # ==================================================
+  # WORKER 2
+  # ==================================================
+
+  worker2:
+
+    build:
+      context: ..
+      dockerfile: docker/worker.Dockerfile
+
+    container_name: crashreduce-worker-2
+
+    depends_on:
+      - coordinator
+
+    environment:
+      - COORDINATOR_URL=http://coordinator:8000
+
+    restart: unless-stopped
+
+    networks:
+      - crashreduce-network
+
+    volumes:
+      - ../storage:/app/storage
+
+  # ==================================================
+  # WORKER 3
+  # ==================================================
+
+  worker3:
+
+    build:
+      context: ..
+      dockerfile: docker/worker.Dockerfile
+
+    container_name: crashreduce-worker-3
+
+    depends_on:
+      - coordinator
+
+    environment:
+      - COORDINATOR_URL=http://coordinator:8000
+
+    restart: unless-stopped
+
+    networks:
+      - crashreduce-network
+
+    volumes:
+      - ../storage:/app/storage
+
+  # ==================================================
+  # PROMETHEUS
+  # ==================================================
+
+  prometheus:
+
+    image: prom/prometheus
+
+    container_name: crashreduce-prometheus
+
+    ports:
+      - "9090:9090"
+
+    volumes:
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+
+    networks:
+      - crashreduce-network
+
+  # ==================================================
+  # GRAFANA
+  # ==================================================
+
+  grafana:
+
+    image: grafana/grafana
+
+    container_name: crashreduce-grafana
+
+    ports:
+      - "3001:3000"
+
+    depends_on:
+      - prometheus
+
+    volumes:
+      - ../monitoring/grafana:/etc/grafana/provisioning
+
+    networks:
+      - crashreduce-network
+
+  # ==================================================
+  # REACT DASHBOARD
+  # ==================================================
+
+  dashboard:
+
+    build:
+      context: ../dashboard
+
+    container_name: crashreduce-dashboard
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - coordinator
+
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
+    restart: unless-stopped
+
+    networks:
+      - crashreduce-network
+
+
+# ==================================================
+# NETWORK
+# ==================================================
+
+networks:
+
+  crashreduce-network:
+
+    driver: bridge
