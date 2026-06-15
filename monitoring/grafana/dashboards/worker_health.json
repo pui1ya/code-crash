@@ -1,0 +1,247 @@
+{
+  "annotations": {
+    "list": []
+  },
+
+  "editable": true,
+
+  "graphTooltip": 0,
+
+  "links": [],
+
+  "panels": [
+
+    {
+      "id": 1,
+
+      "title": "Worker Status",
+
+      "type": "table",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_worker_status"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 2,
+
+      "title": "Worker Heartbeats",
+
+      "type": "timeseries",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_worker_heartbeat_timestamp"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      }
+    },
+
+    {
+      "id": 3,
+
+      "title": "Worker Utilization",
+
+      "type": "timeseries",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_worker_utilization_percent"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      }
+    },
+
+    {
+      "id": 4,
+
+      "title": "Tasks Completed Per Worker",
+
+      "type": "barchart",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_worker_completed_tasks_total"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      }
+    },
+
+    {
+      "id": 5,
+
+      "title": "Failed Tasks Per Worker",
+
+      "type": "barchart",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_worker_failed_tasks_total"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      }
+    },
+
+    {
+      "id": 6,
+
+      "title": "Current Running Tasks",
+
+      "type": "table",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_worker_current_task"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      }
+    },
+
+    {
+      "id": 7,
+
+      "title": "Worker Recovery Events",
+
+      "type": "timeseries",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "increase(crashreduce_worker_recovery_events_total[5m])"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      }
+    },
+
+    {
+      "id": 8,
+
+      "title": "Worker Throughput",
+
+      "type": "timeseries",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "rate(crashreduce_worker_completed_tasks_total[1m])"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      }
+    }
+
+  ],
+
+  "refresh": "5s",
+
+  "schemaVersion": 38,
+
+  "style": "dark",
+
+  "tags": [
+    "crashreduce",
+    "workers",
+    "monitoring"
+  ],
+
+  "templating": {
+
+    "list": [
+
+      {
+        "name": "worker",
+
+        "type": "query",
+
+        "datasource": "Prometheus",
+
+        "query":
+          "label_values(crashreduce_worker_status, worker_id)",
+
+        "multi": true,
+
+        "includeAll": true
+      }
+    ]
+  },
+
+  "time": {
+
+    "from": "now-1h",
+
+    "to": "now"
+  },
+
+  "timezone": "",
+
+  "title": "CrashReduce Worker Health",
+
+  "uid": "crashreduce-worker-health",
+
+  "version": 1
+}

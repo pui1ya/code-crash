@@ -1,0 +1,270 @@
+{
+  "annotations": {
+    "list": []
+  },
+
+  "editable": true,
+
+  "graphTooltip": 0,
+
+  "links": [],
+
+  "panels": [
+
+    {
+      "id": 1,
+
+      "title": "Running Jobs",
+
+      "type": "stat",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_running_jobs"
+        }
+      ],
+
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 2,
+
+      "title": "Completed Jobs",
+
+      "type": "stat",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_completed_jobs_total"
+        }
+      ],
+
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 3,
+
+      "title": "Failed Jobs",
+
+      "type": "stat",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_failed_jobs_total"
+        }
+      ],
+
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 4,
+
+      "title": "Average Job Duration",
+
+      "type": "stat",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "avg(crashreduce_job_duration_seconds)"
+        }
+      ],
+
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      }
+    },
+
+    {
+      "id": 5,
+
+      "title": "Job Progress (%)",
+
+      "type": "timeseries",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_job_progress_percent"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      }
+    },
+
+    {
+      "id": 6,
+
+      "title": "Map Tasks Progress",
+
+      "type": "timeseries",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_completed_map_tasks"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      }
+    },
+
+    {
+      "id": 7,
+
+      "title": "Reduce Tasks Progress",
+
+      "type": "timeseries",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_completed_reduce_tasks"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      }
+    },
+
+    {
+      "id": 8,
+
+      "title": "Job Throughput",
+
+      "type": "timeseries",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "rate(crashreduce_completed_tasks_total[1m])"
+        }
+      ],
+
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      }
+    },
+
+    {
+      "id": 9,
+
+      "title": "Job Status Table",
+
+      "type": "table",
+
+      "datasource": "Prometheus",
+
+      "targets": [
+        {
+          "expr": "crashreduce_job_status"
+        }
+      ],
+
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      }
+    }
+
+  ],
+
+  "refresh": "5s",
+
+  "schemaVersion": 38,
+
+  "style": "dark",
+
+  "tags": [
+    "crashreduce",
+    "jobs",
+    "mapreduce"
+  ],
+
+  "templating": {
+
+    "list": [
+
+      {
+        "name": "job",
+
+        "type": "query",
+
+        "datasource": "Prometheus",
+
+        "query":
+          "label_values(crashreduce_job_status, job_id)",
+
+        "multi": true,
+
+        "includeAll": true
+      }
+    ]
+  },
+
+  "time": {
+
+    "from": "now-1h",
+
+    "to": "now"
+  },
+
+  "timezone": "",
+
+  "title": "CrashReduce Job Progress",
+
+  "uid": "crashreduce-job-progress",
+
+  "version": 1
+}

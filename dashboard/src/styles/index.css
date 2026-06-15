@@ -1,0 +1,230 @@
+:root {
+    --background: #0B0F0C;
+    --primary-green: #00FF88;
+    --secondary-green: #00C96B;
+    --card-background: #121A14;
+    --borders: #1D3527;
+    --glow: 0 0 20px rgba(0,255,136,.4);
+
+    background: #121A14;
+    border: 1px solid #1D3527;
+    box-shadow: 0 0 20px rgba(0,255,136,.15);
+}
+
+.status-idle {
+    color: #00FF88;
+}
+
+.status-busy {
+    color: #B6FF00;
+}
+
+.status-dead {
+    color: #FF4D4D;
+}
+
+.job-card {
+    background: #121A14;
+
+    border: 1px solid #1D3527;
+
+    box-shadow:
+    0 0 20px rgba(0,255,136,.12);
+}
+
+.progress-fill {
+
+    background:
+    linear-gradient(
+        90deg,
+        #00C96B,
+        #00FF88
+    );
+}
+
+.recovery-events-card {
+
+    background: #121A14;
+
+    border: 1px solid #1D3527;
+
+    box-shadow:
+        0 0 25px rgba(
+            0,
+            255,
+            136,
+            0.15
+        );
+}
+
+.event-item {
+
+    border-left:
+        3px solid #00FF88;
+}
+
+.status-online {
+
+    color: #00FF88;
+
+    font-weight: 700;
+
+    text-shadow:
+        0 0 10px #00FF88;
+}
+
+.worker-status-idle {
+    color: #00FF88;
+    text-shadow:
+        0 0 8px #00FF88;
+}
+
+.worker-status-busy {
+    color: #B6FF00;
+}
+
+.worker-status-dead {
+    color: #FF4D4D;
+}
+
+.job-status-running {
+    color: #B6FF00;
+}
+
+.job-status-completed {
+    color: #00FF88;
+}
+
+.job-status-failed {
+    color: #FF4D4D;
+}
+
+.job-status-pending {
+    color: #A0A0A0;
+}
+
+.table-progress-fill {
+
+    background:
+        linear-gradient(
+            90deg,
+            #00C96B,
+            #00FF88
+        );
+
+    box-shadow:
+        0 0 12px rgba(
+            0,
+            255,
+            136,
+            0.4
+        );
+}
+
+.cluster-stat-card {
+
+    background: #121A14;
+
+    border: 1px solid #1D3527;
+
+    box-shadow:
+        0 0 20px rgba(
+            0,
+            255,
+            136,
+            0.12
+        );
+
+    transition: 0.3s;
+}
+
+.cluster-stat-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 0 30px rgba(
+            0,
+            255,
+            136,
+            0.25
+        );
+}
+
+.health-bar-fill {
+
+    background:
+        linear-gradient(
+            90deg,
+            #00C96B,
+            #00FF88
+        );
+
+    box-shadow:
+        0 0 20px #00FF88;
+}
+
+.excellent {
+    color: #00FF88;
+}
+
+.good {
+    color: #B6FF00;
+}
+
+.warning {
+    color: #FFD93D;
+}
+
+.critical {
+    color: #FF4D4D;
+}
+
+.failure-events-card {
+
+    background: #121A14;
+
+    border: 1px solid #1D3527;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 0 25px rgba(
+            0,
+            255,
+            136,
+            0.15
+        );
+}
+
+.event-critical {
+
+    border-left:
+        4px solid #FF4D4D;
+}
+
+.event-success {
+
+    border-left:
+        4px solid #00FF88;
+}
+
+.event-recovery {
+
+    border-left:
+        4px solid #B6FF00;
+}
+
+.failure-event-item:hover {
+
+    transform:
+        translateX(4px);
+
+    box-shadow:
+        0 0 15px rgba(
+            0,
+            255,
+            136,
+            0.15
+        );
+}
