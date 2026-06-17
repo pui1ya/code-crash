@@ -28,6 +28,7 @@ from fastapi import FastAPI
 from fastapi import HTTPException
 from datetime import datetime
 from uuid import uuid4
+from coordinator.task_manager import TaskManager
 
 # =====================================================
 # FastAPI Application
@@ -52,8 +53,9 @@ app = FastAPI(
 # =====================================================
 
 workers = {}
-
+tasks = {}
 jobs = {}
+task_manager = TaskManager()
 
 # =====================================================
 # HEALTH CHECK
@@ -187,16 +189,31 @@ def submit_job(
     job_id = str(uuid4())
 
     jobs[job_id] = {
-        "job_id": job_id,
-        "job_type": job_type,
-        "input_file": input_file,
-        "status": "PENDING",
-        "submitted_at": datetime.utcnow()
+    "job_id": job_id,
+    "job_type": job_type,
+    "input_file": input_file,
+    "status": "PENDING",
+    "submitted_at": datetime.utcnow()
     }
+
+    task_id = task_manager.create_task(
+    job_id=job_id,
+    job_type=job_type,
+    task_type="MAP",
+    input_file=input_file,
+    partition_id=0
+    )
+    print("========== DEBUG ==========")
+    print("JOB CREATED:", job_id)
+    print("TASK CREATED:", task_id)
+    print("TASK COUNT:", len(task_manager.tasks))
+    print("ALL TASKS:", task_manager.tasks)
+    print("===========================")
 
     return {
         "message": "Job submitted",
-        "job_id": job_id
+        "job_id": job_id,
+        "task_id": task_id
     }
 
 
@@ -236,6 +253,28 @@ def get_job(job_id: str):
 
     return jobs[job_id]
 
+from fastapi import Response
+
+@app.get("/workers/{worker_id}/task")
+def get_task(worker_id: str):
+
+    pending_tasks = task_manager.get_pending_tasks()
+
+    if not pending_tasks:
+        return {
+            "message": "No tasks available"
+        }
+
+    task = pending_tasks[0]
+
+    task_manager.assign_task(
+        task["task_id"],
+        worker_id
+    )
+
+    return task_manager.get_task(
+        task["task_id"]
+    )
 
 # =====================================================
 # ROOT ROUTE
@@ -251,28 +290,86 @@ def root():
         "message": "Welcome to CrashReduce Coordinator"
     }
 
+@app.get("/tasks")
+def get_tasks():
+    print("GET TASKS CALLED")
+    print("TASK COUNT:", len(task_manager.tasks))
+    return task_manager.get_all_tasks()
+
+@app.post("/tasks/{task_id}/complete")
+def complete_task(task_id: str):
+
+    task = task_manager.get_task(task_id)
+
+    if not task:
+        return {
+            "error": "Task not found"
+        }
+
+    task_manager.complete_task(task_id)
+
+    if task["task_type"] == "MAP":
+
+        reduce_task_id = task_manager.create_task(
+            job_id=task["job_id"],
+            job_type=task["job_type"],
+            task_type="REDUCE",
+            input_file="",
+            partition_id=0
+        )
+
+        print(
+            f"[REDUCE CREATED] {reduce_task_id}"
+        )
+
+    elif task["task_type"] == "REDUCE":
+
+        jobs[task["job_id"]]["status"] = (
+            "COMPLETED"
+        )
+
+        print(
+            f"[JOB COMPLETED] "
+            f"{task['job_id']}"
+        )
+
+    return {
+        "message": "Task completed",
+        "task_id": task_id
+    }
+
+@app.post("/tasks/{task_id}/failed")
+def fail_task(task_id: str):
+
+    task = task_manager.get_task(task_id)
+
+    if not task:
+        return {"error": "Task not found"}
+
+    task_manager.fail_task(task_id)
+
+    return {
+        "message": "Task marked failed",
+        "task_id": task_id
+    }
+
+@app.delete("/tasks/{task_id}")
+def delete_task(task_id: str):
+
+    task_manager.delete_task(task_id)
+
+    return {
+        "message": "Task deleted"
+    }
 
 # =====================================================
 # SERVER STARTUP
 # =====================================================
 
 if __name__ == "__main__":
-    """
-    Run locally:
-
-    uvicorn coordinator.main:app --reload
-
-    or
-
-    python coordinator/main.py
-    """
-
     import uvicorn
-
     uvicorn.run(
-        "main:app",
+        app,
         host="0.0.0.0",
-        port=8000,
-        reload=True
+        port=8000
     )
-

@@ -78,7 +78,7 @@ class Reducer:
             output file path
         """
 
-        job_type = task["job_type"]
+        job_type = task["job_type"].upper()
 
         reducer_partition = task[
             "partition_id"

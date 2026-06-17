@@ -47,6 +47,7 @@ class TaskManager:
     def create_task(
         self,
         job_id: str,
+        job_type: str,
         task_type: str,
         input_file: str,
         partition_id: int
@@ -67,6 +68,7 @@ class TaskManager:
         self.tasks[task_id] = {
             "task_id": task_id,
             "job_id": job_id,
+            "job_type": job_type,
             "task_type": task_type,
             "partition_id": partition_id,
             "input_file": input_file,

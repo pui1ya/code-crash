@@ -84,7 +84,7 @@ class Mapper:
 
         task_id = task["task_id"]
 
-        job_type = task["job_type"]
+        job_type = task["job_type"].upper()
 
         print(
             f"[MAPPER] Processing "
@@ -344,3 +344,4 @@ class Mapper:
             hash(key)
             % self.num_reducers
         )
+    

@@ -180,23 +180,18 @@ class Worker:
         """
         Inform coordinator that task completed.
         """
+        response = requests.post(
+            f"{COORDINATOR_URL}/tasks/{task_id}/complete",
+            json={
+                "worker_id": self.worker_id,
+                "output_path": output_path
+            }
+        )
 
-        try:
+        print("COMPLETE RESPONSE:", response.status_code)
+        print(response.text)
 
-            requests.post(
-                f"{COORDINATOR_URL}/tasks/"
-                f"{task_id}/complete",
-                json={
-                    "worker_id": self.worker_id,
-                    "output_path": output_path
-                }
-            )
-
-        except Exception as e:
-
-            print(
-                f"[ERROR] Failed to report success: {e}"
-            )
+        response.raise_for_status()
 
     # ==============================================
     # REPORT FAILURE
@@ -236,25 +231,34 @@ class Worker:
         self,
         task: dict
     ):
-        """
-        Executes task using Executor.
-        """
 
         task_id = task["task_id"]
 
         try:
 
-            print(
-                f"[TASK] Starting {task_id}"
-            )
+            print(f"[TASK] Starting {task_id}")
+
+            print("[DEBUG] About to execute task")
 
             output_path = self.executor.execute(
                 task
             )
 
+            print(
+                f"[DEBUG] Executor returned: {output_path}"
+            )
+
+            print(
+                "[DEBUG] Reporting success"
+            )
+
             self.report_success(
                 task_id,
                 output_path
+            )
+
+            print(
+                "[DEBUG] Success reported"
             )
 
             print(
@@ -267,10 +271,53 @@ class Worker:
                 f"[FAILED] {task_id}"
             )
 
+            print(
+                f"[ERROR] {e}"
+            )
+
             self.report_failure(
                 task_id,
                 str(e)
             )
+    # def process_task(
+    #     self,
+    #     task: dict
+    # ):
+    #     """
+    #     Executes task using Executor.
+    #     """
+
+    #     task_id = task["task_id"]
+
+    #     try:
+
+    #         print(
+    #             f"[TASK] Starting {task_id}"
+    #         )
+
+    #         output_path = self.executor.execute(
+    #             task
+    #         )
+
+    #         self.report_success(
+    #             task_id,
+    #             output_path
+    #         )
+
+    #         print(
+    #             f"[SUCCESS] {task_id}"
+    #         )
+
+    #     except Exception as e:
+
+    #         print(
+    #             f"[FAILED] {task_id}"
+    #         )
+
+    #         self.report_failure(
+    #             task_id,
+    #             str(e)
+    #         )
 
     # ==============================================
     # MAIN LOOP
@@ -293,10 +340,17 @@ class Worker:
 
             task = self.request_task()
 
-            if task is None:
+            print("\nDEBUG TASK RESPONSE:")
+            print(task)
+            print()
 
-                time.sleep(POLL_INTERVAL)
+            if not task:
+                time.sleep(2)
+                continue
 
+            if "task_id" not in task:
+                print("[INFO] No task assigned")
+                time.sleep(2)
                 continue
 
             self.process_task(task)
